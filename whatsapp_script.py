@@ -12,24 +12,25 @@ import sys
 def check_if_roll_call():
 
 
-    # obtain & format current date & time 
-    # to (date, month, hour)
+    # obtain current day, date & time 
+    # & format to (date, month, hour)
     now = datetime.now()
-    day_str = now.strftime("%d %B")
+    date_str = now.strftime("%d %B")
+    day_str = now.strftime("%a")
 
 
     # only grab the hours value and
-    # manually add "00" to the back xd
-    time_str = now.strftime("%H00")
+    # minute values xd
+    time_str = now.strftime("%H%M")
 
     
-    # check if it's 0800 or 1400
-    # (time for roll call)
-    if (time_str == "0800" or time_str == "1400"):
+    # check if it's 0800 or 1400 (time for roll call)
+    # and it's a weekday and not a weekend.
+    if (time_str == "0800" or time_str == "1400") and (day_str not in ["Sat", "Sun"]):
 
 
         # if true, return current date & hour
-        return (True, day_str, time_str)
+        return (True, date_str, time_str)
 
     else:
 
@@ -42,19 +43,28 @@ def check_if_roll_call():
 
 
 
-def create_roll_call_message(day_str, time_str, current_location):
+def create_roll_call_message(date_str, time_str, current_location):
     
 
-    # starting message of roll call
-    msg_1 = f"*Roll Call on {day_str} @ {time_str}hrs*"
+    # STARTING MESSAGE OF ROLL CALL
+
+
+    # sets date and month in format eg 7 July @ 1400hrs
+    msg_1 = f"*Roll Call on {date_str} @ {time_str}hrs*"
+
+    # set rank and name
     msg_2 = "1. Name: CPL RYAN"
-    msg_3 = "2. Temperature: 36.3"
+
+    # set temperature
+    msg_3 = "2. Temperature: 36.7"
+
+    # set medical status
     msg_4 = "3. Medical Status: not sick"
+
+    # set location
     msg_5 = f"4. Location: {current_location}"
 
     big_msg = [msg_1, msg_2, msg_3, msg_4, msg_5]
-    #big_msg_cat = '\n'.join(big_msg)
-    #big_msg_cat = big_msg_cat.replace('\n', Keys.SHIFT+Keys.RETURN)
 
     return big_msg
 
@@ -76,7 +86,6 @@ def send_roll_call_msg(driver, roll_call_msg):
 
 
     # find the message box & enter the message in 
-    # TEST: driver.find_element_by_xpath('//*[@id="main"]/footer/div[1]/div[2]/div/div[2]').send_keys(roll_call_msg)
     for msg in roll_call_msg:
         driver.find_element_by_xpath('//*[@id="main"]/footer/div[1]/div[2]/div/div[2]').send_keys(msg)
         driver.find_element_by_xpath('//*[@id="main"]/footer/div[1]/div[2]/div/div[2]').send_keys(Keys.SHIFT + Keys.RETURN)
@@ -98,7 +107,7 @@ def roll_call(s,driver):
 
 
     # check if it's roll call 
-    is_rollcall, day_str, time_str = check_if_roll_call() 
+    is_rollcall, date_str, time_str = check_if_roll_call() 
         
      
     if is_rollcall == True:
@@ -107,8 +116,9 @@ def roll_call(s,driver):
         # create current location & 
         # roll call message and send it
         current_location = "home"
-        roll_call_msg = create_roll_call_message(day_str, time_str, current_location)
+        roll_call_msg = create_roll_call_message(date_str, time_str, current_location)
         send_roll_call_msg(driver, roll_call_msg)
+        print('Time for roll call, sent roll call message!!')
 
 
     else:
@@ -117,7 +127,7 @@ def roll_call(s,driver):
         print('Not time for roll call, checking again in 1 hour...')
     
 
-    # start next schedule check
+    # start next schedule check in 1 hour (3600 seconds)
     s.enter(3600, 1, roll_call, (s,driver))
 
 
