@@ -47,9 +47,9 @@ NO MORE MISSING ROLL CALL. and extra sleep for me. >;)\\\
    2.1. Head to https://www.python.org/downloads/  
    2.2. Download the latest version of python 3  
   
-3. Install Chromedriver  
+3. Install Chromedriver (For those with chrome version 83.0.4103.116, feel free to just run the chromedriver file I've provided) 
 
-   3.1. Head to https://chromedriver.chromium.org/downloads and download the chromedriver for your version of chrome (version 83.0.4103.116 for me xd)  
+   3.1. Head to https://chromedriver.chromium.org/downloads and download the chromedriver for your version of chrome (version 83.0.4103.116 for me!)  
    3.2. Run the executable file   
    
 4. Install Selenium (python packages) via pip  
