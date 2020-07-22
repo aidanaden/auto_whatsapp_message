@@ -8,6 +8,7 @@ from datetime import datetime
 import sched, time
 import sys
 import argparse
+import os
 
 
 def check_if_roll_call():
@@ -27,7 +28,7 @@ def check_if_roll_call():
     
     # check if it's 0800 or 1400 (time for roll call)
     # and it's a weekday and not a weekend.
-    if (time_str == "0800" or time_str == "1400") and (day_str not in ["Sat", "Sun"]):
+    if (time_str == "0000" or time_str == "0600" or time_str == "1100") and (day_str not in ["Sat", "Sun"]):
 
 
         # if true, return current date & hour
@@ -79,12 +80,12 @@ def send_roll_call_msg(driver, roll_call_msg):
 
 
     # set the name of your target (group/user)
-    test_target = "'baby slut '"
+    test_target = "'baby slut'"
     target = '"2nd SCDF *PROVOST*"'
 
 
     # find the convo/chat with target via css selector
-    driver.find_element_by_css_selector(f"span[title={target}]").click()
+    driver.find_element_by_css_selector(f"span[title={test_target}]").click()
 
 
     # find the message box & enter the message in 
@@ -140,32 +141,46 @@ def roll_call(s,driver,roll_call_info):
 
 
 
-def setup(args):
+def setup():
     
     # get status, temp and location from user
-    roll_call_info = (args.status, args.temperature, args.location)
+    #roll_call_info = (args.status, args.temperature, args.location)
+    roll_call_info = ('not sick', '36.6', 'home')
     
     # access chromedriver (use FULL PATH)
     # and make sure it's updated to be compatible
     # with the version of chrome u using 
-    driver = webdriver.Chrome('C:\\Users\\Aidan\\Downloads\\chromedriver_win32\\chromedriver.exe')
+    # driver = webdriver.Chrome('chromedriver.exe')
+    # GOOGLE_CHROME_PATH = '/app/.apt/usr/bin/google_chrome'
+    CHROMEDRIVER_PATH = '/app/.chromedriver/bin/chromedriver'
+    CHROME_BIN = os.environ.get('GOOGLE_CHROME_SHIM', None)
+
+
+    chrome_options = webdriver.ChromeOptions()
+    chrome_options.add_argument('--disable-gpu')
+    chrome_options.add_argument('--no-sandbox')
+    chrome_options.binary_location = CHROME_BIN
+
+
+    browser = webdriver.Chrome(CHROMEDRIVER_PATH, chrome_options=chrome_options)
     
     
     # tells chromedriver to wait for at least 'x'
     # amount of seconds before throwing an error
-    driver.implicitly_wait(15)
+    # driver.implicitly_wait(15)
+    browser.implicitly_wait(15)
     
     
     # start new whatsapp instance (get ur phone rdy)
-    driver.get("https://web.whatsapp.com/")
-    
+    # driver.get("https://web.whatsapp.com/")
+    browser.get("https://web.whatsapp.com/")
     
     # setup scheduler
     s = sched.scheduler(time.time, time.sleep)
     
     
     # start first schedule
-    s.enter(0, 1, roll_call, (s,driver,roll_call_info))
+    s.enter(0, 1, roll_call, (s,browser,roll_call_info))
     
     
     # start scheduler
@@ -173,11 +188,12 @@ def setup(args):
 
 
 
-parser = argparse.ArgumentParser()
-parser.add_argument('temperature',help='Enter your temperature for the day in degrees C.')
-parser.add_argument('status', help='Enter your medical status (sick or not sick) for the day.')
-parser.add_argument('location', help='Enter your location for the day (div or home) and reason.')
+#parser = argparse.ArgumentParser()
+#parser.add_argument('temperature',help='Enter your temperature for the day in degrees C.')
+#parser.add_argument('status', help='Enter your medical status (sick or not sick) for the day.')
+#parser.add_argument('location', help='Enter your location for the day (div or home) and reason.')
 
-args = parser.parse_args()
+#args = parser.parse_args()
+    
 
-setup(args)
+setup()
