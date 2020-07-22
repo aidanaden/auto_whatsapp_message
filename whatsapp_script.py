@@ -7,6 +7,7 @@ from datetime import date
 from datetime import datetime
 import sched, time
 import sys
+import argparse
 
 
 def check_if_roll_call():
@@ -21,7 +22,7 @@ def check_if_roll_call():
 
     # only grab the hours value and
     # minute values xd
-    time_str = now.strftime("%H%M")
+    time_str = now.strftime("%H00")
 
     
     # check if it's 0800 or 1400 (time for roll call)
@@ -43,10 +44,11 @@ def check_if_roll_call():
 
 
 
-def create_roll_call_message(date_str, time_str, current_location):
+def create_roll_call_message(date_str, time_str, roll_call_info):
     
 
-    # STARTING MESSAGE OF ROLL CALL
+    # unwrap roll call info
+    status, temp, location = roll_call_info
 
 
     # sets date and month in format eg 7 July @ 1400hrs
@@ -56,13 +58,13 @@ def create_roll_call_message(date_str, time_str, current_location):
     msg_2 = "1. Name: CPL RYAN"
 
     # set temperature
-    msg_3 = "2. Temperature: 36.7"
+    msg_3 = f"2. Temperature: {temp}"
 
     # set medical status
-    msg_4 = "3. Medical Status: not sick"
+    msg_4 = f"3. Medical Status: {status}"
 
     # set location
-    msg_5 = f"4. Location: {current_location}"
+    msg_5 = f"4. Location: {location}"
 
     big_msg = [msg_1, msg_2, msg_3, msg_4, msg_5]
 
@@ -103,7 +105,7 @@ def send_roll_call_msg(driver, roll_call_msg):
 
 
 
-def roll_call(s,driver):
+def roll_call(s,driver,roll_call_info):
 
 
     # check if it's roll call 
@@ -113,30 +115,35 @@ def roll_call(s,driver):
     if is_rollcall == True:
 
         # if it's roll call time, 
-        # create current location & 
-        # roll call message and send it
-        current_location = "home"
-        roll_call_msg = create_roll_call_message(date_str, time_str, current_location)
+        # create roll call message and send it
+        roll_call_msg = create_roll_call_message(date_str, time_str, roll_call_info)
         send_roll_call_msg(driver, roll_call_msg)
         print('Time for roll call, sent roll call message!!')
+
+
+        # start next schedule check in 1 hr (3600 seconds)
+        s.enter(3600, 1, roll_call, (s,driver,roll_call_info))
 
 
     else:
 
         # if not true, create new schedule 
-        print('Not time for roll call, checking again in 1 hour...')
+        print('Not time for roll call, checking again in 10 mins...')
     
 
-    # start next schedule check in 1 hour (3600 seconds)
-    s.enter(3600, 1, roll_call, (s,driver))
-
-
-
-
-
-
-def setup():
+        # start next schedule check in 10 mins (600 seconds)
+        s.enter(600, 1, roll_call, (s,driver,roll_call_info))
     
+
+
+
+
+
+
+def setup(args):
+    
+    # get status, temp and location from user
+    roll_call_info = (args.status, args.temperature, args.location)
     
     # access chromedriver (use FULL PATH)
     # and make sure it's updated to be compatible
@@ -158,7 +165,7 @@ def setup():
     
     
     # start first schedule
-    s.enter(0, 1, roll_call, (s,driver))
+    s.enter(0, 1, roll_call, (s,driver,roll_call_info))
     
     
     # start scheduler
@@ -166,6 +173,11 @@ def setup():
 
 
 
+parser = argparse.ArgumentParser()
+parser.add_argument('temperature',help='Enter your temperature for the day in degrees C.')
+parser.add_argument('status', help='Enter your medical status (sick or not sick) for the day.')
+parser.add_argument('location', help='Enter your location for the day (div or home) and reason.')
 
+args = parser.parse_args()
 
-setup()
+setup(args)
