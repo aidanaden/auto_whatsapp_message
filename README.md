@@ -58,24 +58,13 @@ NO MORE MISSING ROLL CALL. and extra sleep for me. >;)\\\
    4.2. Enter the command "pip install selenium"   
 
 
-
-## Customize values (whatsapp_script.py)
-1. Set your roll call timings (line 28)
-2. Set your name (line 50)
-3. Set your desired temperature (line 51)
-4. Set your medical status (line 52)
-5. Set your location (line 53)
-6. Set your target (name of person/group you're sending the roll call message to)
-
-   
    
 ## Usage details
 1. Open your command prompt
-2. Customize your roll call values (roll call timing, name, temperature, etc)
-3. Run the main script with the command "python whatsapp_script.py
-4. Open whatsapp on your phone and scan the QR code that pops up on the new chrome window.
-5. Leave your laptop on 24/7. 
-6. PROFIT.  
+2. Run the cript with the command "python whatsapp_script.py "<enter your temperature>" "<enter status>" "<enter location>"
+3. Open whatsapp on your phone and scan the QR code that pops up on the new chrome window.
+4. Leave your laptop on 24/7. (Will be looking for server alternative soon!)
+5. PROFIT.
 
 
 
