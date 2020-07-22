@@ -61,7 +61,7 @@ NO MORE MISSING ROLL CALL. and extra sleep for me. >;)\\\
    
 ## Usage details
 1. Open your command prompt
-2. Run the cript with the command "python whatsapp_script.py "<enter your temperature>" "<enter status>" "<enter location>"
+2. Run the script with the command "python whatsapp_script.py "<enter your temperature>" "<enter status>" "<enter location>"
 3. Open whatsapp on your phone and scan the QR code that pops up on the new chrome window.
 4. Leave your laptop on 24/7. (Will be looking for server alternative soon!)
 5. PROFIT.
